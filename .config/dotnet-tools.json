@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "linq2db.cli": {
+      "version": "6.0.0-dev.17100",
+      "commands": [
+        "dotnet-linq2db"
+      ],
+      "rollForward": false
+    }
+  }
+}
