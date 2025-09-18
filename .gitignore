@@ -203,6 +203,7 @@ project.lock.json
 
 # Rider
 .idea/
+*.sln.DotSettings.user
 
 # Visual Studio Code
 .vscode/
