@@ -1,4 +1,6 @@
-﻿using DAL.Context;
+using ByteAether.Ulid;
+using DAL.Base;
+using DAL.Context;
 using DAL.Context.Entity;
 using LinqToDB;
 
@@ -15,8 +17,35 @@ var ctx = new DbCtx(
 	)
 );
 
-var q = ctx.GetTable<User>();
+await ctx.BeginTransactionAsync();
 
-Console.WriteLine($"Query: {q.ToSqlQuery().Sql}");
+// Create tenant
+var tenant = new Tenant
+{
+	Id = Ulid.New(),
+	Name = "TestTenant"
+};
+await ctx.CreateAsync(tenant);
+
+// Create entity
+var u = new User
+{
+	Id = Ulid.New(),
+	TenantId = tenant.Id,
+	Username = "asd123"
+};
+await ctx.CreateAsync(u);
+
+Console.WriteLine(ctx.LastQuery);
+
+// Modify entity
+await ctx.GetTable<User>()
+	.Where(x => x.Id == u.Id)
+	.Set(x => x.Username, "asd1234")
+	.ModifyAsync();
+
+Console.WriteLine(ctx.LastQuery);
+
+await ctx.RollbackTransactionAsync();
 
 Console.WriteLine("Done.");

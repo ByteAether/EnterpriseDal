@@ -89,6 +89,24 @@ public sealed class Interceptor : ScaffoldInterceptors
 			}
 		}
 
+		// ICreatable
+		var createdAtField = entityModel.Columns.FirstOrDefault(x =>
+			x.Property.Name == nameof(ICreatable.CreatedAt)
+		);
+		if (createdAtField is not null)
+		{
+			addedInterfaces.Add(typeof(ICreatable));
+		}
+
+		// IUpdateable
+		var updatedAtField = entityModel.Columns.FirstOrDefault(x =>
+			x.Property.Name == nameof(IModifiable.ModifiedAt)
+		);
+		if (updatedAtField is not null)
+		{
+			addedInterfaces.Add(typeof(IModifiable));
+		}
+
 		// Add all found interfaces
 		entityModel.Class.Interfaces ??= [];
 		entityModel.Class.Interfaces.AddRange(addedInterfaces.Select(typeParser.Parse));
