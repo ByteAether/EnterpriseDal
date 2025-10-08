@@ -31,13 +31,14 @@ namespace DAL.Context
 namespace DAL.Context.Entity
 {
 	[Table("comment")]
-	public partial class Comment : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable
+	public partial class Comment : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
 	{
-		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true             )] public Ulid     Id         { get; set; } // ulid
-		[Column("post_id"    , DataType  = DataType.Binary                                     )] public Ulid     PostId     { get; set; } // ulid
-		[Column("content"    , CanBeNull = false             , DataType     = DataType.NVarChar)] public string   Content    { get; set; } = null!; // TEXT
-		[Column("created_at" , DataType  = DataType.DateTime2                                  )] public DateTime CreatedAt  { get; set; } // DATETIME
-		[Column("modified_at", DataType  = DataType.DateTime2                                  )] public DateTime ModifiedAt { get; set; } // DATETIME
+		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true             )] public Ulid      Id         { get; set; } // ulid
+		[Column("post_id"    , DataType  = DataType.Binary                                     )] public Ulid      PostId     { get; set; } // ulid
+		[Column("content"    , CanBeNull = false             , DataType     = DataType.NVarChar)] public string    Content    { get; set; } = null!; // TEXT
+		[Column("created_at" , DataType  = DataType.DateTime2                                  )] public DateTime  CreatedAt  { get; set; } // DATETIME
+		[Column("modified_at", DataType  = DataType.DateTime2                                  )] public DateTime  ModifiedAt { get; set; } // DATETIME
+		[Column("removed_at" , DataType  = DataType.DateTime2                                  )] public DateTime? RemovedAt  { get; set; } // DATETIME
 
 		#region Associations
 		/// <summary>
@@ -49,14 +50,15 @@ namespace DAL.Context.Entity
 	}
 
 	[Table("post")]
-	public partial class Post : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable
+	public partial class Post : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
 	{
-		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid     Id         { get; set; } // ulid
-		[Column("user_id"    , DataType  = DataType.Binary                                                  )] public Ulid     UserId     { get; set; } // ulid
-		[Column("title"      , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string   Title      { get; set; } = null!; // varchar(64)
-		[Column("content"    , CanBeNull = false             , DataType     = DataType.NVarChar             )] public string   Content    { get; set; } = null!; // TEXT
-		[Column("created_at" , DataType  = DataType.DateTime2                                               )] public DateTime CreatedAt  { get; set; } // DATETIME
-		[Column("modified_at", DataType  = DataType.DateTime2                                               )] public DateTime ModifiedAt { get; set; } // DATETIME
+		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid      Id         { get; set; } // ulid
+		[Column("user_id"    , DataType  = DataType.Binary                                                  )] public Ulid      UserId     { get; set; } // ulid
+		[Column("title"      , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string    Title      { get; set; } = null!; // varchar(64)
+		[Column("content"    , CanBeNull = false             , DataType     = DataType.NVarChar             )] public string    Content    { get; set; } = null!; // TEXT
+		[Column("created_at" , DataType  = DataType.DateTime2                                               )] public DateTime  CreatedAt  { get; set; } // DATETIME
+		[Column("modified_at", DataType  = DataType.DateTime2                                               )] public DateTime  ModifiedAt { get; set; } // DATETIME
+		[Column("removed_at" , DataType  = DataType.DateTime2                                               )] public DateTime? RemovedAt  { get; set; } // DATETIME
 
 		#region Associations
 		/// <summary>
@@ -74,12 +76,13 @@ namespace DAL.Context.Entity
 	}
 
 	[Table("tenant")]
-	public partial class Tenant : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable
+	public partial class Tenant : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
 	{
-		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid     Id         { get; set; } // ulid
-		[Column("name"       , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string   Name       { get; set; } = null!; // VARCHAR(64)
-		[Column("created_at" , DataType  = DataType.DateTime2                                               )] public DateTime CreatedAt  { get; set; } // DATETIME
-		[Column("modified_at", DataType  = DataType.DateTime2                                               )] public DateTime ModifiedAt { get; set; } // DATETIME
+		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid      Id         { get; set; } // ulid
+		[Column("name"       , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string    Name       { get; set; } = null!; // VARCHAR(64)
+		[Column("created_at" , DataType  = DataType.DateTime2                                               )] public DateTime  CreatedAt  { get; set; } // DATETIME
+		[Column("modified_at", DataType  = DataType.DateTime2                                               )] public DateTime  ModifiedAt { get; set; } // DATETIME
+		[Column("removed_at" , DataType  = DataType.DateTime2                                               )] public DateTime? RemovedAt  { get; set; } // DATETIME
 
 		#region Associations
 		/// <summary>
@@ -91,13 +94,14 @@ namespace DAL.Context.Entity
 	}
 
 	[Table("user")]
-	public partial class User : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable
+	public partial class User : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
 	{
-		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid     Id         { get; set; } // ulid
-		[Column("tenant_id"  , DataType  = DataType.Binary                                                  )] public Ulid     TenantId   { get; set; } // ulid
-		[Column("username"   , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string   Username   { get; set; } = null!; // VARCHAR(64)
-		[Column("created_at" , DataType  = DataType.DateTime2                                               )] public DateTime CreatedAt  { get; set; } // DATETIME
-		[Column("modified_at", DataType  = DataType.DateTime2                                               )] public DateTime ModifiedAt { get; set; } // DATETIME
+		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid      Id         { get; set; } // ulid
+		[Column("tenant_id"  , DataType  = DataType.Binary                                                  )] public Ulid      TenantId   { get; set; } // ulid
+		[Column("username"   , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string    Username   { get; set; } = null!; // VARCHAR(64)
+		[Column("created_at" , DataType  = DataType.DateTime2                                               )] public DateTime  CreatedAt  { get; set; } // DATETIME
+		[Column("modified_at", DataType  = DataType.DateTime2                                               )] public DateTime  ModifiedAt { get; set; } // DATETIME
+		[Column("removed_at" , DataType  = DataType.DateTime2                                               )] public DateTime? RemovedAt  { get; set; } // DATETIME
 
 		#region Associations
 		/// <summary>

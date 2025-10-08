@@ -1,5 +1,6 @@
 using ByteAether.Ulid;
 using DAL.Base;
+using DAL.Base.EntityFilter;
 using LinqToDB.Data;
 
 namespace DAL.Context;
@@ -18,5 +19,7 @@ public partial class DbCtx : IDbCtx
 		);
 		MappingSchema.SetConvertExpression<byte[], Ulid>(x => Ulid.New(x));
 		MappingSchema.SetConvertExpression<byte[]?, Ulid?>(x => x != null ? Ulid.New(x) : null);
+
+		MappingSchema.ApplyEntityFilters<DbCtx>();
 	}
 }

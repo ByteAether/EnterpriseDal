@@ -107,6 +107,15 @@ public sealed class Interceptor : ScaffoldInterceptors
 			addedInterfaces.Add(typeof(IModifiable));
 		}
 
+		// IRemovable
+		var removedAtField = entityModel.Columns.FirstOrDefault(x =>
+			x.Property.Name == nameof(IRemovable.RemovedAt)
+		);
+		if (removedAtField is not null)
+		{
+			addedInterfaces.Add(typeof(IRemovable));
+		}
+
 		// Add all found interfaces
 		entityModel.Class.Interfaces ??= [];
 		entityModel.Class.Interfaces.AddRange(addedInterfaces.Select(typeParser.Parse));

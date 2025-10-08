@@ -46,6 +46,13 @@ await ctx.GetTable<User>()
 
 Console.WriteLine(ctx.LastQuery);
 
+// Remove entity
+await ctx.GetTable<User>()
+	.Where(x => x.Id == u.Id)
+	.RemoveAsync();
+
+Console.WriteLine(ctx.LastQuery);
+
 await ctx.RollbackTransactionAsync();
 
 Console.WriteLine("Done.");

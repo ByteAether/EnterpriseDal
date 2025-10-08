@@ -67,4 +67,31 @@ public static class CrudExtensions
 	public static Task<int> ModifyAsync<T>(this IQueryable<T> source, CancellationToken cancellationToken = default)
 		where T : class
 		=> source.AsUpdatable().ModifyAsync(cancellationToken);
+
+	public static Task<int> RemoveAsync<T>(this IDbCtx ctx, T entity, CancellationToken cancellationToken = default)
+		where T : class, IEntity
+	{
+		if (entity is IRemovable removable)
+		{
+			removable.RemovedAt = DateTime.UtcNow;
+			return ctx.ModifyAsync(entity, cancellationToken);
+		}
+
+		return ctx.GetTable<T>().DeleteOptimisticAsync(entity, cancellationToken);
+	}
+
+	public static Task<int> RemoveAsync<T>(this IQueryable<T> source, CancellationToken cancellationToken = default)
+		where T : class
+	{
+		if (typeof(IRemovable).IsAssignableFrom(typeof(T)))
+		{
+			var delSource = source.Set(
+				x => Sql.Property<DateTime?>(x, nameof(IRemovable.RemovedAt)),
+				DateTime.UtcNow
+			);
+			return delSource.ModifyAsync(cancellationToken);
+		}
+
+		return source.DeleteAsync(cancellationToken);
+	}
 }
