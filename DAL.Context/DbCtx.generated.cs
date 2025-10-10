@@ -94,7 +94,7 @@ namespace DAL.Context.Entity
 	}
 
 	[Table("user")]
-	public partial class User : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
+	public partial class User : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable, ITenanted
 	{
 		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid      Id         { get; set; } // ulid
 		[Column("tenant_id"  , DataType  = DataType.Binary                                                  )] public Ulid      TenantId   { get; set; } // ulid

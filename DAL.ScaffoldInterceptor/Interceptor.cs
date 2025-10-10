@@ -116,6 +116,15 @@ public sealed class Interceptor : ScaffoldInterceptors
 			addedInterfaces.Add(typeof(IRemovable));
 		}
 
+		// ITenanted
+		var tenantIdField = entityModel.Columns.FirstOrDefault(x =>
+			x.Property.Name == nameof(ITenanted.TenantId)
+		);
+		if (tenantIdField is not null)
+		{
+			addedInterfaces.Add(typeof(ITenanted));
+		}
+
 		// Add all found interfaces
 		entityModel.Class.Interfaces ??= [];
 		entityModel.Class.Interfaces.AddRange(addedInterfaces.Select(typeParser.Parse));

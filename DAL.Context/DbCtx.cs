@@ -7,6 +7,8 @@ namespace DAL.Context;
 
 public partial class DbCtx : IDbCtx
 {
+	public IDbCtx.DbCtxAttributes Attributes { get; set; } = new();
+
 	partial void InitDataContext()
 	{
 		InlineParameters = true;
