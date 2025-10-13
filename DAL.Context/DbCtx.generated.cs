@@ -49,6 +49,14 @@ namespace DAL.Context.Entity
 		#endregion
 	}
 
+	[Table("permission")]
+	public partial class Permission : IEntity, IIdentifiable<Ulid>
+	{
+		[Column("id"        , DataType = DataType.Binary, IsPrimaryKey = true)] public Ulid Id        { get; set; } // ulid
+		[Column("subject_id", DataType = DataType.Binary                     )] public Ulid SubjectId { get; set; } // ulid
+		[Column("object_id" , DataType = DataType.Binary                     )] public Ulid ObjectId  { get; set; } // ulid
+	}
+
 	[Table("post")]
 	public partial class Post : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
 	{
