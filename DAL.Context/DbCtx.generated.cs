@@ -31,18 +31,32 @@ namespace DAL.Context
 namespace DAL.Context.Entity
 {
 	[Table("comment")]
-	public partial class Comment : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
+	public partial class Comment : IEntity, IIdentifiable<Ulid>, ICreatable, IUserCreatable, IModifiable, IUserModifiable, IRemovable
 	{
-		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true             )] public Ulid      Id         { get; set; } // ulid
-		[Column("post_id"    , DataType  = DataType.Binary                                     )] public Ulid      PostId     { get; set; } // ulid
-		[Column("content"    , CanBeNull = false             , DataType     = DataType.NVarChar)] public string    Content    { get; set; } = null!; // TEXT
-		[Column("created_at" , DataType  = DataType.DateTime2                                  )] public DateTime  CreatedAt  { get; set; } // DATETIME
-		[Column("modified_at", DataType  = DataType.DateTime2                                  )] public DateTime  ModifiedAt { get; set; } // DATETIME
-		[Column("removed_at" , DataType  = DataType.DateTime2                                  )] public DateTime? RemovedAt  { get; set; } // DATETIME
+		[Column("id"                 , DataType  = DataType.Binary   , IsPrimaryKey = true             )] public Ulid      Id               { get; set; } // ulid
+		[Column("post_id"            , DataType  = DataType.Binary                                     )] public Ulid      PostId           { get; set; } // ulid
+		[Column("content"            , CanBeNull = false             , DataType     = DataType.NVarChar)] public string    Content          { get; set; } = null!; // TEXT
+		[Column("created_at"         , DataType  = DataType.DateTime2                                  )] public DateTime  CreatedAt        { get; set; } // DATETIME
+		[Column("modified_at"        , DataType  = DataType.DateTime2                                  )] public DateTime  ModifiedAt       { get; set; } // DATETIME
+		[Column("removed_at"         , DataType  = DataType.DateTime2                                  )] public DateTime? RemovedAt        { get; set; } // DATETIME
+		[Column("created_by_user_id" , DataType  = DataType.Binary                                     )] public Ulid      CreatedByUserId  { get; set; } // ulid
+		[Column("modified_by_user_id", DataType  = DataType.Binary                                     )] public Ulid      ModifiedByUserId { get; set; } // ulid
 
 		#region Associations
 		/// <summary>
 		/// FK_comment_0
+		/// </summary>
+		[Association(CanBeNull = false, ThisKey = nameof(ModifiedByUserId), OtherKey = nameof(User.Id))]
+		public User ModifiedByUser { get; set; } = null!;
+
+		/// <summary>
+		/// FK_comment_1
+		/// </summary>
+		[Association(CanBeNull = false, ThisKey = nameof(CreatedByUserId), OtherKey = nameof(User.Id))]
+		public User CreatedByUser { get; set; } = null!;
+
+		/// <summary>
+		/// FK_comment_2
 		/// </summary>
 		[Association(CanBeNull = false, ThisKey = nameof(PostId), OtherKey = nameof(Entity.Post.Id))]
 		public Post Post { get; set; } = null!;
@@ -58,25 +72,39 @@ namespace DAL.Context.Entity
 	}
 
 	[Table("post")]
-	public partial class Post : IEntity, IIdentifiable<Ulid>, ICreatable, IModifiable, IRemovable
+	public partial class Post : IEntity, IIdentifiable<Ulid>, ICreatable, IUserCreatable, IModifiable, IUserModifiable, IRemovable
 	{
-		[Column("id"         , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid      Id         { get; set; } // ulid
-		[Column("user_id"    , DataType  = DataType.Binary                                                  )] public Ulid      UserId     { get; set; } // ulid
-		[Column("title"      , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string    Title      { get; set; } = null!; // varchar(64)
-		[Column("content"    , CanBeNull = false             , DataType     = DataType.NVarChar             )] public string    Content    { get; set; } = null!; // TEXT
-		[Column("created_at" , DataType  = DataType.DateTime2                                               )] public DateTime  CreatedAt  { get; set; } // DATETIME
-		[Column("modified_at", DataType  = DataType.DateTime2                                               )] public DateTime  ModifiedAt { get; set; } // DATETIME
-		[Column("removed_at" , DataType  = DataType.DateTime2                                               )] public DateTime? RemovedAt  { get; set; } // DATETIME
+		[Column("id"                 , DataType  = DataType.Binary   , IsPrimaryKey = true                          )] public Ulid      Id               { get; set; } // ulid
+		[Column("user_id"            , DataType  = DataType.Binary                                                  )] public Ulid      UserId           { get; set; } // ulid
+		[Column("title"              , CanBeNull = false             , DataType     = DataType.NVarChar, Length = 64)] public string    Title            { get; set; } = null!; // varchar(64)
+		[Column("content"            , CanBeNull = false             , DataType     = DataType.NVarChar             )] public string    Content          { get; set; } = null!; // TEXT
+		[Column("created_at"         , DataType  = DataType.DateTime2                                               )] public DateTime  CreatedAt        { get; set; } // DATETIME
+		[Column("modified_at"        , DataType  = DataType.DateTime2                                               )] public DateTime  ModifiedAt       { get; set; } // DATETIME
+		[Column("removed_at"         , DataType  = DataType.DateTime2                                               )] public DateTime? RemovedAt        { get; set; } // DATETIME
+		[Column("created_by_user_id" , DataType  = DataType.Binary                                                  )] public Ulid      CreatedByUserId  { get; set; } // ulid
+		[Column("modified_by_user_id", DataType  = DataType.Binary                                                  )] public Ulid      ModifiedByUserId { get; set; } // ulid
 
 		#region Associations
 		/// <summary>
-		/// FK_comment_0 backreference
+		/// FK_comment_2 backreference
 		/// </summary>
 		[Association(ThisKey = nameof(Id), OtherKey = nameof(Comment.PostId))]
 		public Comment[] Comments { get; set; } = null!;
 
 		/// <summary>
 		/// FK_post_0
+		/// </summary>
+		[Association(CanBeNull = false, ThisKey = nameof(ModifiedByUserId), OtherKey = nameof(Entity.User.Id))]
+		public User ModifiedByUser { get; set; } = null!;
+
+		/// <summary>
+		/// FK_post_1
+		/// </summary>
+		[Association(CanBeNull = false, ThisKey = nameof(CreatedByUserId), OtherKey = nameof(Entity.User.Id))]
+		public User CreatedByUser { get; set; } = null!;
+
+		/// <summary>
+		/// FK_post_2
 		/// </summary>
 		[Association(CanBeNull = false, ThisKey = nameof(UserId), OtherKey = nameof(Entity.User.Id))]
 		public User User { get; set; } = null!;
@@ -113,7 +141,31 @@ namespace DAL.Context.Entity
 
 		#region Associations
 		/// <summary>
+		/// FK_comment_0 backreference
+		/// </summary>
+		[Association(ThisKey = nameof(Id), OtherKey = nameof(Comment.ModifiedByUserId))]
+		public Comment[] ModifiedByComments { get; set; } = null!;
+
+		/// <summary>
+		/// FK_comment_1 backreference
+		/// </summary>
+		[Association(ThisKey = nameof(Id), OtherKey = nameof(Comment.CreatedByUserId))]
+		public Comment[] CreatedByComments { get; set; } = null!;
+
+		/// <summary>
 		/// FK_post_0 backreference
+		/// </summary>
+		[Association(ThisKey = nameof(Id), OtherKey = nameof(Post.ModifiedByUserId))]
+		public Post[] ModifiedByPosts { get; set; } = null!;
+
+		/// <summary>
+		/// FK_post_1 backreference
+		/// </summary>
+		[Association(ThisKey = nameof(Id), OtherKey = nameof(Post.CreatedByUserId))]
+		public Post[] CreatedByPosts { get; set; } = null!;
+
+		/// <summary>
+		/// FK_post_2 backreference
 		/// </summary>
 		[Association(ThisKey = nameof(Id), OtherKey = nameof(Post.UserId))]
 		public Post[] Posts { get; set; } = null!;

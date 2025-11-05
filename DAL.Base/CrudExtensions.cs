@@ -1,7 +1,9 @@
+using ByteAether.Ulid;
 using DAL.Base.EntityBehavior;
 using LinqToDB;
 using LinqToDB.Concurrency;
 using LinqToDB.Data;
+using LinqToDB.Internal.Linq;
 using LinqToDB.Linq;
 
 namespace DAL.Base;
@@ -23,9 +25,19 @@ public static class CrudExtensions
 							creatable.CreatedAt = DateTime.UtcNow;
 						}
 
+						if (e is IUserCreatable userCreatable && userCreatable.CreatedByUserId == default)
+						{
+							userCreatable.CreatedByUserId = ctx.Attributes.UserId ?? Ulid.Empty;
+						}
+
 						if (e is IModifiable updateable && updateable.ModifiedAt == default)
 						{
 							updateable.ModifiedAt = DateTime.UtcNow;
+						}
+
+						if (e is IUserModifiable userUpdateable && userUpdateable.ModifiedByUserId == default)
+						{
+							userUpdateable.ModifiedByUserId = ctx.Attributes.UserId ?? Ulid.Empty;
 						}
 
 						return e;
@@ -47,6 +59,11 @@ public static class CrudExtensions
 			updateable.ModifiedAt = DateTime.UtcNow;
 		}
 
+		if (entity is IUserModifiable userUpdateable)
+		{
+			userUpdateable.ModifiedByUserId = ctx.Attributes.UserId ?? Ulid.Empty;
+		}
+
 		return ctx.GetTable<T>().UpdateOptimisticAsync(entity, cancellationToken);
 	}
 
@@ -58,6 +75,15 @@ public static class CrudExtensions
 			source = source.Set(
 				x => Sql.Property<DateTime>(x, nameof(IModifiable.ModifiedAt)),
 				DateTime.UtcNow
+			);
+		}
+
+		if (typeof(IUserModifiable).IsAssignableFrom(typeof(T)))
+		{
+			var dbCtx = Internals.GetDataContext(source) as IDbCtx;
+			source = source.Set(
+				x => Sql.Property<Ulid>(x, nameof(IUserModifiable.ModifiedByUserId)),
+				dbCtx?.Attributes.UserId ?? Ulid.Empty
 			);
 		}
 

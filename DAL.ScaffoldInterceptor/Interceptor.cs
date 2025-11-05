@@ -98,6 +98,15 @@ public sealed class Interceptor : ScaffoldInterceptors
 			addedInterfaces.Add(typeof(ICreatable));
 		}
 
+		// IUserCreatable
+		var createdByField = entityModel.Columns.FirstOrDefault(x =>
+			x.Property.Name == nameof(IUserCreatable.CreatedByUserId)
+		);
+		if (createdByField is not null)
+		{
+			addedInterfaces.Add(typeof(IUserCreatable));
+		}
+
 		// IUpdateable
 		var updatedAtField = entityModel.Columns.FirstOrDefault(x =>
 			x.Property.Name == nameof(IModifiable.ModifiedAt)
@@ -105,6 +114,15 @@ public sealed class Interceptor : ScaffoldInterceptors
 		if (updatedAtField is not null)
 		{
 			addedInterfaces.Add(typeof(IModifiable));
+		}
+
+		// IUserUpdateable
+		var updatedByField = entityModel.Columns.FirstOrDefault(x =>
+			x.Property.Name == nameof(IUserModifiable.ModifiedByUserId)
+		);
+		if (updatedByField is not null)
+		{
+			addedInterfaces.Add(typeof(IUserModifiable));
 		}
 
 		// IRemovable
